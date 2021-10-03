@@ -191,6 +191,7 @@ namespace godot {
         bool checkEventPath(String eventPath);
         int getBankLoadingState(String pathToBank);
         int getBankBusCount(String pathToBank);
+        Array getBankEventPathList(String pathToBank);
         int getBankEventCount(String pathToBank);
         int getBankStringCount(String pathToBank);
         int getBankVCACount(String pathToBank);

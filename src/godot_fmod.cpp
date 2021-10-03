@@ -36,6 +36,7 @@ void Fmod::_register_methods() {
     register_method("check_event_path", &Fmod::checkEventPath);
     register_method("get_bank_loading_state", &Fmod::getBankLoadingState);
     register_method("get_bank_bus_count", &Fmod::getBankBusCount);
+    register_method("get_bank_event_path_list", &Fmod::getBankEventPathList);
     register_method("get_bank_event_count", &Fmod::getBankEventCount);
     register_method("get_bank_string_count", &Fmod::getBankStringCount);
     register_method("get_bank_VCA_count", &Fmod::getBankVCACount);
@@ -617,6 +618,25 @@ int Fmod::getBankBusCount(String pathToBank) {
     return count;
 }
 
+Array Fmod::getBankEventPathList(String pathToBank) {
+    Array array;
+    DRIVE_PATH(pathToBank)
+    FIND_AND_CHECK(pathToBank, banks, array)
+
+    int eventCount = Fmod::getBankEventCount(pathToBank);
+    auto eventDescriptions = new FMOD::Studio::EventDescription*[eventCount]();
+    ERROR_CHECK(instance->getEventList(eventDescriptions, eventCount, nullptr));
+
+    for (int i = 0; i < eventCount; i++) {
+        FMOD::Studio::EventDescription *desc = eventDescriptions[i];
+        char path[MAX_PATH_SIZE];
+        ERROR_CHECK(desc->getPath(path, MAX_PATH_SIZE, nullptr));
+        array.append(String(path));
+    }
+
+    return array;
+}
+
 int Fmod::getBankEventCount(String pathToBank) {
     DRIVE_PATH(pathToBank)
     FIND_AND_CHECK(pathToBank, banks, -1)
@@ -925,18 +945,16 @@ bool Fmod::descHasCue(const String eventPath) {
 }
 
 float Fmod::descGetMaximumDistance(const String eventPath) {
-    float minDistance = 0.f;
     float maxDistance = 0.f;
     FIND_AND_CHECK(eventPath, eventDescriptions, maxDistance)
-    ERROR_CHECK(instance->getMinMaxDistance(&minDistance, &maxDistance));
+    ERROR_CHECK(instance->getMinMaxDistance(nullptr, &maxDistance));
     return maxDistance;
 }
 
 float Fmod::descGetMinimumDistance(const String eventPath) {
     float minDistance = 0.f;
-    float maxDistance = 0.f;
     FIND_AND_CHECK(eventPath, eventDescriptions, minDistance)
-    ERROR_CHECK(instance->getMinMaxDistance(&minDistance, &maxDistance));
+    ERROR_CHECK(instance->getMinMaxDistance(&minDistance, nullptr));
     return minDistance;
 }
 
