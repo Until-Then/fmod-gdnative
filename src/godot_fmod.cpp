@@ -705,7 +705,7 @@ void Fmod::stopEvent(const uint64_t instanceId, int stopMode) {
 
 void Fmod::triggerEventCue(const uint64_t instanceId) {
     FIND_AND_CHECK(instanceId, events)
-    ERROR_CHECK(instance->triggerCue());
+    ERROR_CHECK(instance->keyOff());
 }
 
 int Fmod::getEventPlaybackState(const uint64_t instanceId) {
@@ -920,22 +920,24 @@ bool Fmod::descIsStream(const String eventPath) {
 bool Fmod::descHasCue(const String eventPath) {
     bool hasCue = false;
     FIND_AND_CHECK(eventPath, eventDescriptions, hasCue)
-    ERROR_CHECK(instance->hasCue(&hasCue));
+    ERROR_CHECK(instance->hasSustainPoint(&hasCue));
     return hasCue;
 }
 
 float Fmod::descGetMaximumDistance(const String eventPath) {
-    float distance = 0.f;
-    FIND_AND_CHECK(eventPath, eventDescriptions, distance)
-    ERROR_CHECK(instance->getMaximumDistance(&distance));
-    return distance;
+    float minDistance = 0.f;
+    float maxDistance = 0.f;
+    FIND_AND_CHECK(eventPath, eventDescriptions, maxDistance)
+    ERROR_CHECK(instance->getMinMaxDistance(&minDistance, &maxDistance));
+    return maxDistance;
 }
 
 float Fmod::descGetMinimumDistance(const String eventPath) {
-    float distance = 0.f;
-    FIND_AND_CHECK(eventPath, eventDescriptions, distance)
-    ERROR_CHECK(instance->getMinimumDistance(&distance));
-    return distance;
+    float minDistance = 0.f;
+    float maxDistance = 0.f;
+    FIND_AND_CHECK(eventPath, eventDescriptions, minDistance)
+    ERROR_CHECK(instance->getMinMaxDistance(&minDistance, &maxDistance));
+    return minDistance;
 }
 
 float Fmod::descGetSoundSize(const String eventPath) {
@@ -957,6 +959,8 @@ Dictionary Fmod::descGetParameterDescriptionByName(const String eventPath, const
         paramDesc["minimum"] = pDesc.minimum;
         paramDesc["maximum"] = pDesc.maximum;
         paramDesc["default_value"] = pDesc.defaultvalue;
+        paramDesc["type"] = pDesc.type;
+        paramDesc["flags"] = pDesc.flags; 
     }
     return paramDesc;
 }
@@ -976,6 +980,8 @@ Dictionary Fmod::descGetParameterDescriptionByID(const String eventPath, const A
         paramDesc["minimum"] = pDesc.minimum;
         paramDesc["maximum"] = pDesc.maximum;
         paramDesc["default_value"] = pDesc.defaultvalue;
+        paramDesc["type"] = pDesc.type;
+        paramDesc["flags"] = pDesc.flags; 
     }
     return paramDesc;
 }
@@ -999,6 +1005,8 @@ Dictionary Fmod::descGetParameterDescriptionByIndex(const String eventPath, cons
         paramDesc["minimum"] = pDesc.minimum;
         paramDesc["maximum"] = pDesc.maximum;
         paramDesc["default_value"] = pDesc.defaultvalue;
+        paramDesc["type"] = pDesc.type;
+        paramDesc["flags"] = pDesc.flags;
     }
     return paramDesc;
 }
@@ -1528,14 +1536,17 @@ void Fmod::setDriver(const int id) {
 Dictionary Fmod::getPerformanceData() {
 
     // get the CPU usage
-    FMOD_STUDIO_CPU_USAGE cpuUsage;
-    ERROR_CHECK(system->getCPUUsage(&cpuUsage));
+    FMOD_STUDIO_CPU_USAGE usage;
+    FMOD_CPU_USAGE usageCore;
+    ERROR_CHECK(system->getCPUUsage(&usage, &usageCore));
     Dictionary cpuPerfData = performanceData["CPU"];
-    cpuPerfData["dsp"] = cpuUsage.dspusage;
-    cpuPerfData["geometry"] = cpuUsage.geometryusage;
-    cpuPerfData["stream"] = cpuUsage.streamusage;
-    cpuPerfData["studio"] = cpuUsage.studiousage;
-    cpuPerfData["update"] = cpuUsage.updateusage;
+    cpuPerfData["dsp"] = usageCore.dsp;
+    cpuPerfData["stream"] = usageCore.stream;
+    cpuPerfData["geometry"] = usageCore.geometry;
+    cpuPerfData["update"] = usageCore.update;
+    cpuPerfData["convolution1"] = usageCore.convolution1;
+    cpuPerfData["convolution2"] = usageCore.convolution2;
+    cpuPerfData["studio"] = usage.update;
 
     // get the memory usage
     int currentAlloc = 0;
@@ -1652,6 +1663,8 @@ Array Fmod::getGlobalParameterDescList() {
         paramDesc["minimum"] = pDesc.minimum;
         paramDesc["maximum"] = pDesc.maximum;
         paramDesc["default_value"] = pDesc.defaultvalue;
+        paramDesc["type"] = pDesc.type;
+        paramDesc["flags"] = pDesc.flags; 
         a.append(paramDesc);
     }
     return a;

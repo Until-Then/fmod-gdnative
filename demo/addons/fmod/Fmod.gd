@@ -1,4 +1,6 @@
+tool
 extends Node
+
 signal timeline_beat
 signal timeline_marker
 signal sound_played
@@ -112,6 +114,23 @@ const FMOD_STUDIO_PLAYBACK_STARTING = 3
 const FMOD_STUDIO_PLAYBACK_STOPPING = 4
 const FMOD_STUDIO_PLAYBACK_FORCEINT = 65536
 
+const FMOD_STUDIO_PARAMETER_GAME_CONTROLLED = 0
+const FMOD_STUDIO_PARAMETER_AUTOMATIC_DISTANCE = 1
+const FMOD_STUDIO_PARAMETER_AUTOMATIC_EVENT_CONE_ANGLE = 2
+const FMOD_STUDIO_PARAMETER_AUTOMATIC_EVENT_ORIENTATION = 3
+const FMOD_STUDIO_PARAMETER_AUTOMATIC_DIRECTION = 4
+const FMOD_STUDIO_PARAMETER_AUTOMATIC_ELEVATION = 5
+const FMOD_STUDIO_PARAMETER_AUTOMATIC_LISTENER_ORIENTATION = 6
+const FMOD_STUDIO_PARAMETER_AUTOMATIC_SPEED = 7
+const FMOD_STUDIO_PARAMETER_AUTOMATIC_SPEED_ABSOLUTE = 8
+const FMOD_STUDIO_PARAMETER_AUTOMATIC_DISTANCE_NORMALIZED = 9
+const FMOD_STUDIO_PARAMETER_MAX = 10
+
+const FMOD_STUDIO_PARAMETER_READONLY = 0x00000001
+const FMOD_STUDIO_PARAMETER_AUTOMATIC = 0x00000002
+const FMOD_STUDIO_PARAMETER_GLOBAL = 0x00000004
+const FMOD_STUDIO_PARAMETER_DISCRETE = 0x00000008
+const FMOD_STUDIO_PARAMETER_LABELED = 0x00000010
 
 var started := false
 
@@ -480,17 +499,17 @@ func desc_get_minimum_distance(event_path: String) -> float:
 func desc_get_sound_size(event_path: String) -> float:
 	return godot_fmod.desc_get_sound_size(event_path)
 
-func desc_get_parameter_description_by_name(event_path: String) -> Dictionary:
-	return godot_fmod.desc_get_parameter_description_by_name(event_path)
+func desc_get_parameter_description_by_name(event_path: String, name: String) -> Dictionary:
+	return godot_fmod.desc_get_parameter_description_by_name(event_path, name)
 
-func desc_get_parameter_description_by_id(event_path: String) -> Dictionary:
-	return godot_fmod.desc_get_parameter_description_by_id(event_path)
+func desc_get_parameter_description_by_id(event_path: String, id_pair: Array) -> Dictionary:
+	return godot_fmod.desc_get_parameter_description_by_id(event_path, id_pair)
 
 func desc_get_parameter_description_count(event_path: String) -> int:
 	return godot_fmod.desc_get_parameter_description_count(event_path)
 
-func desc_get_parameter_description_by_index(event_path: String) -> Dictionary:
-	return godot_fmod.desc_get_parameter_description_by_index(event_path)
+func desc_get_parameter_description_by_index(event_path: String, index: int) -> Dictionary:
+	return godot_fmod.desc_get_parameter_description_by_index(event_path, index)
 
 func desc_get_user_property(event_path: String) -> Dictionary:
 	return godot_fmod.desc_get_user_property(event_path)
