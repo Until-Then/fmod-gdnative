@@ -178,7 +178,7 @@ if host_platform == 'windows':
     opts.Update(env)
 
 if env["headers_dir"] == 'default':
-    env["headers_dir"] = os.environ.get("GODOT_HEADERS", env["cpp_bindings_dir"] + "godot_headers/")
+    env["headers_dir"] = os.environ.get("GODOT_HEADERS", env["cpp_bindings_dir"] + "godot-headers/")
 
 if env['bits'] == 'default':
     env['bits'] = '64' if is64 else '32'
