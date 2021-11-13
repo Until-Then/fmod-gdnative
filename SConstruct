@@ -453,9 +453,8 @@ add_sources(sources, "./src/callback", 'cpp')
 
 # determine to link as shared or static library
 
-lib_name_without_bin = 'libGodotFmod.{}.{}.{}'.format(
+lib_name_without_bin = 'libGodotFmod.{}.{}'.format(
     env['platform'],
-    env['target'],
     arch_suffix)
 
 lib_name = 'bin/' + lib_name_without_bin
