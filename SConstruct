@@ -479,3 +479,5 @@ elif platform == "windows":
 elif platform == "ios":
     library = env.StaticLibrary(target=lib_name +".a", source=sources)
 Default(library)
+
+CacheDir('../.cache/scons')
