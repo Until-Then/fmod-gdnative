@@ -325,8 +325,8 @@ FMOD_3D_ATTRIBUTES Fmod::get3DAttributes(const FMOD_VECTOR &pos, const FMOD_VECT
 
 FMOD_3D_ATTRIBUTES Fmod::get3DAttributesFromTransform(const Transform transform) {
     Vector3 pos = transform.get_origin() / distanceScale;
-    Vector3 up = transform.get_basis().elements[1];
-    Vector3 forward = transform.get_basis().elements[2];
+    Vector3 up = transform.get_basis().get_axis(1);
+    Vector3 forward = transform.get_basis().get_axis(2);
     Vector3 vel(0, 0, 0);
     return get3DAttributes(toFmodVector(pos), toFmodVector(up), toFmodVector(forward), toFmodVector(vel));
 }
